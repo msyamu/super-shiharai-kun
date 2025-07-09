@@ -6,7 +6,7 @@ object Constants {
     // Fee and Tax Rates
     val FEE_RATE = BigDecimal("0.04")
     val TAX_RATE = BigDecimal("0.10")
-    
+
     // Error Messages
     const val EMAIL_ALREADY_EXISTS_ERROR = "Email already exists"
     const val INVALID_CREDENTIALS_ERROR = "Invalid email or password"

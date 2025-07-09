@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
     private const val DRIVER_CLASS_NAME = "org.postgresql.Driver"
-    
+
     fun init() {
         Database.connect(
             url = AppConfig.Database.jdbcUrl,
@@ -15,7 +15,7 @@ object DatabaseFactory {
             user = AppConfig.Database.user,
             password = AppConfig.Database.password
         )
-        
+
         transaction {
             SchemaUtils.create(UserTable, InvoiceTable)
         }

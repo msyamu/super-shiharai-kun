@@ -25,7 +25,7 @@ class UserRepositoryImpl : UserRepository {
             it[createdAt] = now
             it[updatedAt] = now
         }
-        
+
         User(
             id = id.value,
             companyName = newUser.companyName,

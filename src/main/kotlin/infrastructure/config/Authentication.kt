@@ -9,7 +9,7 @@ fun Application.configureAuthentication(jwtService: JwtService) {
     install(Authentication) {
         jwt("jwt") {
             verifier(jwtService.getVerifier())
-            
+
             validate { credential ->
                 if (credential.payload.subject != null) {
                     JWTPrincipal(credential.payload)

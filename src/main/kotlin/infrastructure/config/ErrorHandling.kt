@@ -11,6 +11,7 @@ fun Application.configureErrorHandling() {
     val logger = LoggerFactory.getLogger("Application")
 
     install(StatusPages) {
+
         exception<BadRequestException> { call, cause ->
             logger.warn("Bad request: ${cause.message}", cause)
             call.respond(

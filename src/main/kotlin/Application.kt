@@ -16,16 +16,16 @@ fun main(args: Array<String>) {
 
 fun Application.module() {
     DatabaseFactory.init()
-    
+
     configureCallLogging()
-    
+
     install(ContentNegotiation) {
         json()
     }
-    
+
     val dependencies = DependencyInjection.provideDependencies()
     configureAuthentication(dependencies.jwtService)
     configureErrorHandling()
-    
+
     configureRouting(dependencies)
 }
