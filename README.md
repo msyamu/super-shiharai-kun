@@ -9,10 +9,10 @@ Clean Architectureパターンを採用。詳細は [DEVELOPMENT.md](./DEVELOPME
 ## 🚀 クイックスタート
 
 ### 必要な環境
-- Java 11+ (推奨: Java 17+)
+- [Kotlin 2.2.0](https://kotlinlang.org/docs/getting-started.html)
 - Docker
 
-### セットアップ（3分）
+### セットアップ
 
 1. **環境ファイル作成**
    ```bash
@@ -22,8 +22,7 @@ Clean Architectureパターンを採用。詳細は [DEVELOPMENT.md](./DEVELOPME
 
 2. **起動**
    ```bash
-   docker-compose up -d  # データベース起動
-   ./gradlew run         # アプリケーション起動
+   ./run-local.sh
    ```
 
 3. **動作確認**
