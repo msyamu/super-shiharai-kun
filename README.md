@@ -32,7 +32,7 @@ Clean Architectureパターンを採用。詳細は [DEVELOPMENT.md](./DEVELOPME
 
 ## 📚 ドキュメント
 
-- **[開発者ガイド](./DEVELOPMENT.md)** - 設計思想、コーディング規約、開発フロー
+- **[開発者ガイド](./DEVELOPMENT.md)** - 設計思想
 - **[Swagger UI](http://localhost:8080/swagger)** - API仕様（開発時のみ）
 
 ## 🔧 API概要
@@ -52,4 +52,4 @@ Clean Architectureパターンを採用。詳細は [DEVELOPMENT.md](./DEVELOPME
 ./gradlew run              # サーバー起動
 ./gradlew test             # テスト実行
 ./gradlew build            # ビルド
-``
+```

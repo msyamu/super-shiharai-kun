@@ -1,22 +1,25 @@
 # 開発者ガイド
 
-## ディレクトリ構成と責務
+## 🏗️ アーキテクチャ概要
+
+Clean Architectureパターンを採用し、ビジネスロジックを中心とした設計。  
+決済システムの複雑なルールを保守しやすく設計している。
+
+## 📁 ディレクトリ構成と責務
 
 ### 📁 domain/ - ビジネスロジックの核
 ```
 domain/
 ├── model/          # ドメインエンティティ
 │   ├── Invoice.kt      # 請求書の業務ルール（手数料計算等）
+│   ├── NewInvoice.kt   # 新規請求書作成時のビジネスルール
 │   ├── User.kt         # ユーザーエンティティ
+│   ├── NewUser.kt      # 新規ユーザー作成時のルール
 │   └── Page.kt         # ページネーション
 └── repository/     # データアクセスの抽象化
     ├── InvoiceRepository.kt  # 請求書データ操作の契約
     └── UserRepository.kt     # ユーザーデータ操作の契約
 ```
-
-**何を書くべきか**:
-- **model/**: ビジネスルール、制約、計算ロジック
-- **repository/**: データ操作のinterface（実装は書かない）
 
 ### 📁 application/ - ユースケース
 ```
@@ -24,7 +27,8 @@ application/
 ├── usecase/        # ビジネス操作の組み合わせ
 │   ├── InvoiceRegistrationUseCase.kt  # 請求書作成の流れ
 │   ├── InvoiceListUseCase.kt          # 請求書一覧取得の流れ
-│   └── LoginUseCase.kt                # ログイン処理の流れ
+│   ├── LoginUseCase.kt                # ログイン処理の流れ
+│   └── UserRegistrationUseCase.kt     # ユーザー登録の流れ
 └── error/          # アプリケーション例外
     └── AuthenticationException.kt
 ```
@@ -37,19 +41,25 @@ application/
 ```
 infrastructure/
 ├── api/route/      # HTTPルート定義
+│   ├── HealthRoute.kt     # ヘルスチェック
 │   ├── InvoiceRoute.kt    # /api/v1/invoices のルート
 │   └── UserRoute.kt       # /api/v1/auth のルート
 ├── config/         # 設定・認証・ログ
 │   ├── AppConfig.kt       # 環境変数の取得
 │   ├── Authentication.kt  # JWT認証設定
-│   └── ErrorHandling.kt   # グローバルエラーハンドラ
+│   ├── ErrorHandling.kt   # グローバルエラーハンドラ
+│   ├── RequestValidation.kt # リクエストバリデーション設定
+│   └── Constants.kt       # アプリケーション定数
 ├── database/       # DB関連
 │   ├── Database.kt        # DB接続設定
-│   ├── InvoiceTable.kt    # テーブル定義
-│   └── UserTable.kt       # テーブル定義
+│   ├── InvoiceTable.kt    # 請求書テーブル定義
+│   └── UserTable.kt       # ユーザーテーブル定義
 ├── repository/     # Repository実装
 │   ├── InvoiceRepositoryImpl.kt  # 実際のDB操作
 │   └── UserRepositoryImpl.kt     # 実際のDB操作
+├── serializer/     # シリアライザー
+│   ├── BigDecimalSerializer.kt   # 金額のシリアライゼーション
+│   └── LocalDateSerializer.kt    # 日付のシリアライゼーション
 └── service/        # 外部サービス
     └── JwtService.kt      # JWT操作
 ```
@@ -67,18 +77,20 @@ presentation/
 ├── controller/     # リクエスト処理
 │   ├── InvoiceController.kt  # 請求書API制御
 │   └── UserController.kt     # ユーザーAPI制御
-├── dto/           # データ転送オブジェクト
-│   ├── InvoiceRegistrationRequest.kt  # リクエスト形式
-│   ├── InvoiceResponse.kt             # レスポンス形式
-│   └── PaginatedResponse.kt           # ページネーション形式
-└── validation/    # 入力検証
-    └── InvoiceValidation.kt    # 入力値のバリデーション
+└── dto/           # データ転送オブジェクト
+    ├── BaseRequest.kt                # 共通リクエスト基底クラス
+    ├── InvoiceRegistrationRequest.kt # 請求書作成リクエスト
+    ├── InvoiceResponse.kt            # 請求書レスポンス
+    ├── LoginRequest.kt               # ログインリクエスト
+    ├── LoginResponse.kt              # ログインレスポンス
+    ├── PaginatedResponse.kt          # ページネーションレスポンス
+    ├── UserRegistrationRequest.kt    # ユーザー登録リクエスト
+    └── UserResponse.kt               # ユーザーレスポンス
 ```
 
 **何を書くべきか**:
 - **controller/**: バリデーション実行、UseCase呼び出し、レスポンス生成
 - **dto/**: API入出力の形式定義（必ず`@Serializable`）
-- **validation/**: 入力値の形式チェック
 
 ### 📁 test/ - テスト構成
 ```
@@ -88,18 +100,15 @@ test/
 │   ├── domain/model/           # ドメインロジックのテスト
 │   ├── infrastructure/
 │   │   ├── api/route/          # ルートの統合テスト
-│   │   └── repository/         # リポジトリのテスト
-│   └── presentation/controller/ # コントローラーのテスト
+│   │   ├── repository/         # リポジトリのテスト
+│   │   └── service/            # サービスのテスト
+│   ├── presentation/
+│   │   ├── controller/         # コントローラーのテスト
+│   │   └── dto/                # DTOバリデーションテスト
+│   └── util/                   # テストユーティリティ
 └── resources/
     └── application-test.conf    # テスト用設定
 ```
-
-**何を書くべきか**:
-- **route/**: HTTP API全体の動作確認
-- **repository/**: DB操作の正確性確認
-- **controller/**: バリデーション、エラーハンドリングの確認
-- **usecase/**: ビジネスロジックの単体テスト
-- **model/**: ドメインルール、計算ロジックの確認
 
 ## 🎯 レイヤー間のルール
 
