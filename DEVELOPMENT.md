@@ -57,9 +57,6 @@ infrastructure/
 ├── repository/     # Repository実装
 │   ├── InvoiceRepositoryImpl.kt  # 実際のDB操作
 │   └── UserRepositoryImpl.kt     # 実際のDB操作
-├── serializer/     # シリアライザー
-│   ├── BigDecimalSerializer.kt   # 金額のシリアライゼーション
-│   └── LocalDateSerializer.kt    # 日付のシリアライゼーション
 └── service/        # 外部サービス
     └── JwtService.kt      # JWT操作
 ```
@@ -77,20 +74,24 @@ presentation/
 ├── controller/     # リクエスト処理
 │   ├── InvoiceController.kt  # 請求書API制御
 │   └── UserController.kt     # ユーザーAPI制御
-└── dto/           # データ転送オブジェクト
-    ├── BaseRequest.kt                # 共通リクエスト基底クラス
-    ├── InvoiceRegistrationRequest.kt # 請求書作成リクエスト
-    ├── InvoiceResponse.kt            # 請求書レスポンス
-    ├── LoginRequest.kt               # ログインリクエスト
-    ├── LoginResponse.kt              # ログインレスポンス
-    ├── PaginatedResponse.kt          # ページネーションレスポンス
-    ├── UserRegistrationRequest.kt    # ユーザー登録リクエスト
-    └── UserResponse.kt               # ユーザーレスポンス
+├── dto/           # データ転送オブジェクト
+│   ├── BaseRequest.kt                # 共通リクエスト基底クラス
+│   ├── InvoiceRegistrationRequest.kt # 請求書作成リクエスト
+│   ├── InvoiceResponse.kt            # 請求書レスポンス
+│   ├── LoginRequest.kt               # ログインリクエスト
+│   ├── LoginResponse.kt              # ログインレスポンス
+│   ├── PaginatedResponse.kt          # ページネーションレスポンス
+│   ├── UserRegistrationRequest.kt    # ユーザー登録リクエスト
+│   └── UserResponse.kt               # ユーザーレスポンス
+└── serializer/     # シリアライザー
+    ├── BigDecimalSerializer.kt   # 金額のシリアライゼーション
+    └── LocalDateSerializer.kt    # 日付のシリアライゼーション
 ```
 
 **何を書くべきか**:
 - **controller/**: バリデーション実行、UseCase呼び出し、レスポンス生成
 - **dto/**: API入出力の形式定義（必ず`@Serializable`）
+- **serializer/**: JSON ↔ Kotlinオブジェクト変換（BigDecimal、LocalDate等）
 
 ### 📁 test/ - テスト構成
 ```

@@ -1,7 +1,7 @@
 package com.example.presentation.dto
 
-import com.example.infrastructure.serializer.BigDecimalSerializer
-import com.example.infrastructure.serializer.LocalDateSerializer
+import com.example.presentation.serializer.BigDecimalSerializer
+import com.example.presentation.serializer.LocalDateSerializer
 import io.ktor.server.plugins.requestvalidation.*
 import kotlinx.serialization.Serializable
 import java.math.BigDecimal
