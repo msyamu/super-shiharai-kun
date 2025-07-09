@@ -9,8 +9,8 @@ Clean Architectureパターンを採用。詳細は [DEVELOPMENT.md](./DEVELOPME
 ## 🚀 クイックスタート
 
 ### 必要な環境
-- Java 17+
-- Docker & Docker Compose
+- Kotlin 2.1.10
+- Docker
 
 ### セットアップ（3分）
 
