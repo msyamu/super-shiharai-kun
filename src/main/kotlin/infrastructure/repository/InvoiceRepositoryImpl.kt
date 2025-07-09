@@ -2,6 +2,8 @@ package com.example.infrastructure.repository
 
 import com.example.domain.model.Invoice
 import com.example.domain.model.NewInvoice
+import com.example.domain.model.Page
+import com.example.domain.model.PageRequest
 import com.example.domain.repository.InvoiceRepository
 import com.example.infrastructure.database.InvoiceTable
 import org.jetbrains.exposed.sql.*
@@ -29,7 +31,8 @@ class InvoiceRepositoryImpl : InvoiceRepository {
             .single().let { rowToInvoice(it) }
     }
 
-    override suspend fun findByUserIdWithOptionalDateRange(userId: Int, startDate: LocalDate?, endDate: LocalDate?): List<Invoice> = transaction {
+
+    override suspend fun findByUserIdWithOptionalDateRange(userId: Int, startDate: LocalDate?, endDate: LocalDate?, pageRequest: PageRequest): Page<Invoice> = transaction {
         var query = InvoiceTable.selectAll().where { InvoiceTable.userId eq userId }
 
         startDate?.let { start ->
@@ -40,7 +43,14 @@ class InvoiceRepositoryImpl : InvoiceRepository {
             query = query.andWhere { InvoiceTable.paymentDueDate lessEq end }
         }
 
-        query.map { rowToInvoice(it) }
+        val totalElements = query.count()
+        
+        val content = query.orderBy(InvoiceTable.createdAt, SortOrder.DESC)
+            .offset(pageRequest.offset.toLong())
+            .limit(pageRequest.size)
+            .map { rowToInvoice(it) }
+
+        Page(content, totalElements, pageRequest)
     }
 
     private fun rowToInvoice(row: ResultRow): Invoice {

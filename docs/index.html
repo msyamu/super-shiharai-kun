@@ -820,6 +820,56 @@
     }
   }
 };
+            defs["PaginatedInvoiceResponse"] = {
+  "type" : "object",
+  "properties" : {
+    "data" : {
+      "type" : "array",
+      "description" : "List of invoices",
+      "items" : {
+        "$ref" : "#/components/schemas/InvoiceResponse"
+      }
+    },
+    "pagination" : {
+      "$ref" : "#/components/schemas/PaginationInfo"
+    }
+  }
+};
+            defs["PaginationInfo"] = {
+  "type" : "object",
+  "properties" : {
+    "page" : {
+      "type" : "integer",
+      "description" : "Current page number",
+      "example" : 1
+    },
+    "limit" : {
+      "type" : "integer",
+      "description" : "Number of items per page",
+      "example" : 20
+    },
+    "total" : {
+      "type" : "integer",
+      "description" : "Total number of items",
+      "example" : 100
+    },
+    "totalPages" : {
+      "type" : "integer",
+      "description" : "Total number of pages",
+      "example" : 5
+    },
+    "hasNext" : {
+      "type" : "boolean",
+      "description" : "Whether there is a next page",
+      "example" : true
+    },
+    "hasPrevious" : {
+      "type" : "boolean",
+      "description" : "Whether there is a previous page",
+      "example" : false
+    }
+  }
+};
             defs["UserRegistrationRequest"] = {
   "required" : [ "companyName", "email", "name", "password" ],
   "type" : "object",
@@ -968,7 +1018,7 @@
                            <pre class="prettyprint"><code class="language-bsh">curl -X GET\
  -H "Authorization: Bearer [[accessToken]]"\
 -H "Accept: application/json"\
-"http://localhost:8080/api/v1/invoices?startDate=&endDate="</code></pre>
+"http://localhost:8080/api/v1/invoices?startDate=&endDate=&page=&size="</code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Default-getInvoices-0-java">
                             <pre class="prettyprint"><code class="language-java">import io.swagger.client.*;
@@ -988,8 +1038,10 @@ public class DefaultApiExample {
         DefaultApi apiInstance = new DefaultApi();
         date startDate = 2013-10-20; // date | Start date for filtering (YYYY-MM-DD)
         date endDate = 2013-10-20; // date | End date for filtering (YYYY-MM-DD)
+        Integer page = 56; // Integer | Page number (starts from 1)
+        Integer size = 56; // Integer | Number of items per page (1-100)
         try {
-            array[InvoiceResponse] result = apiInstance.getInvoices(startDate, endDate);
+            PaginatedInvoiceResponse result = apiInstance.getInvoices(startDate, endDate, page, size);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling DefaultApi#getInvoices");
@@ -1008,8 +1060,10 @@ public class DefaultApiExample {
         DefaultApi apiInstance = new DefaultApi();
         date startDate = 2013-10-20; // date | Start date for filtering (YYYY-MM-DD)
         date endDate = 2013-10-20; // date | End date for filtering (YYYY-MM-DD)
+        Integer page = 56; // Integer | Page number (starts from 1)
+        Integer size = 56; // Integer | Number of items per page (1-100)
         try {
-            array[InvoiceResponse] result = apiInstance.getInvoices(startDate, endDate);
+            PaginatedInvoiceResponse result = apiInstance.getInvoices(startDate, endDate, page, size);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling DefaultApi#getInvoices");
@@ -1026,13 +1080,17 @@ public class DefaultApiExample {
                               <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
 date *startDate = 2013-10-20; // Start date for filtering (YYYY-MM-DD) (optional)
 date *endDate = 2013-10-20; // End date for filtering (YYYY-MM-DD) (optional)
+Integer *page = 56; // Page number (starts from 1) (optional) (default to 1)
+Integer *size = 56; // Number of items per page (1-100) (optional) (default to 20)
 
 DefaultApi *apiInstance = [[DefaultApi alloc] init];
 
 // Get invoices
 [apiInstance getInvoicesWith:startDate
     endDate:endDate
-              completionHandler: ^(array[InvoiceResponse] output, NSError* error) {
+    page:page
+    size:size
+              completionHandler: ^(PaginatedInvoiceResponse output, NSError* error) {
                             if (output) {
                                 NSLog(@"%@", output);
                             }
@@ -1051,7 +1109,9 @@ var defaultClient = SuperShiharaiKunApi.ApiClient.instance;
 var api = new SuperShiharaiKunApi.DefaultApi()
 var opts = { 
   'startDate': 2013-10-20, // {{date}} Start date for filtering (YYYY-MM-DD)
-  'endDate': 2013-10-20 // {{date}} End date for filtering (YYYY-MM-DD)
+  'endDate': 2013-10-20, // {{date}} End date for filtering (YYYY-MM-DD)
+  'page': 56, // {{Integer}} Page number (starts from 1)
+  'size': 56 // {{Integer}} Number of items per page (1-100)
 };
 var callback = function(error, data, response) {
   if (error) {
@@ -1085,11 +1145,13 @@ namespace Example
             var apiInstance = new DefaultApi();
             var startDate = 2013-10-20;  // date | Start date for filtering (YYYY-MM-DD) (optional) 
             var endDate = 2013-10-20;  // date | End date for filtering (YYYY-MM-DD) (optional) 
+            var page = 56;  // Integer | Page number (starts from 1) (optional)  (default to 1)
+            var size = 56;  // Integer | Number of items per page (1-100) (optional)  (default to 20)
 
             try
             {
                 // Get invoices
-                array[InvoiceResponse] result = apiInstance.getInvoices(startDate, endDate);
+                PaginatedInvoiceResponse result = apiInstance.getInvoices(startDate, endDate, page, size);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -1110,9 +1172,11 @@ require_once(__DIR__ . '/vendor/autoload.php');
 $api_instance = new Swagger\Client\ApiDefaultApi();
 $startDate = 2013-10-20; // date | Start date for filtering (YYYY-MM-DD)
 $endDate = 2013-10-20; // date | End date for filtering (YYYY-MM-DD)
+$page = 56; // Integer | Page number (starts from 1)
+$size = 56; // Integer | Number of items per page (1-100)
 
 try {
-    $result = $api_instance->getInvoices($startDate, $endDate);
+    $result = $api_instance->getInvoices($startDate, $endDate, $page, $size);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling DefaultApi->getInvoices: ', $e->getMessage(), PHP_EOL;
@@ -1129,9 +1193,11 @@ use WWW::SwaggerClient::DefaultApi;
 my $api_instance = WWW::SwaggerClient::DefaultApi->new();
 my $startDate = 2013-10-20; # date | Start date for filtering (YYYY-MM-DD)
 my $endDate = 2013-10-20; # date | End date for filtering (YYYY-MM-DD)
+my $page = 56; # Integer | Page number (starts from 1)
+my $size = 56; # Integer | Number of items per page (1-100)
 
 eval { 
-    my $result = $api_instance->getInvoices(startDate => $startDate, endDate => $endDate);
+    my $result = $api_instance->getInvoices(startDate => $startDate, endDate => $endDate, page => $page, size => $size);
     print Dumper($result);
 };
 if ($@) {
@@ -1151,10 +1217,12 @@ from pprint import pprint
 api_instance = swagger_client.DefaultApi()
 startDate = 2013-10-20 # date | Start date for filtering (YYYY-MM-DD) (optional)
 endDate = 2013-10-20 # date | End date for filtering (YYYY-MM-DD) (optional)
+page = 56 # Integer | Page number (starts from 1) (optional) (default to 1)
+size = 56 # Integer | Number of items per page (1-100) (optional) (default to 20)
 
 try: 
     # Get invoices
-    api_response = api_instance.get_invoices(startDate=startDate, endDate=endDate)
+    api_response = api_instance.get_invoices(startDate=startDate, endDate=endDate, page=page, size=size)
     pprint(api_response)
 except ApiException as e:
     print("Exception when calling DefaultApi->getInvoices: %s\n" % e)</code></pre>
@@ -1217,10 +1285,48 @@ except ApiException as e:
                                     </div>
                                 </td>
                                 </tr>
+                                <tr><td style="width:150px;">page</td>
+                                <td>
+                                
+                                
+                                    <div id="d2e199_getInvoices_page">
+                                        <div class="json-schema-view">
+                                            <div class="primitive">
+                                                <span class="type">
+                                                    Integer
+                                                </span>
+                                
+                                                    <div class="inner description">
+                                                        Page number (starts from 1)
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                </tr>
+                                <tr><td style="width:150px;">size</td>
+                                <td>
+                                
+                                
+                                    <div id="d2e199_getInvoices_size">
+                                        <div class="json-schema-view">
+                                            <div class="primitive">
+                                                <span class="type">
+                                                    Integer
+                                                </span>
+                                
+                                                    <div class="inner description">
+                                                        Number of items per page (1-100)
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                </tr>
                             </table>
 
                           <h2>Responses</h2>
-                            <h3> Status: 200 - List of invoices </h3>
+                            <h3> Status: 200 - Paginated list of invoices </h3>
 
                             <ul class="nav nav-tabs nav-tabs-examples" >
                                 <li class="active">
@@ -1235,15 +1341,11 @@ except ApiException as e:
                                     <script>
                                       $(document).ready(function() {
                                         var schemaWrapper = {
-  "description" : "List of invoices",
+  "description" : "Paginated list of invoices",
   "content" : {
     "application/json" : {
       "schema" : {
-        "type" : "array",
-        "x-content-type" : "application/json",
-        "items" : {
-          "$ref" : "#/components/schemas/InvoiceResponse"
-        }
+        "$ref" : "#/components/schemas/PaginatedInvoiceResponse"
       }
     }
   }

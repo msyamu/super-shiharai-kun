@@ -1,5 +1,6 @@
 package com.example.infrastructure.api.route
 
+import com.example.domain.model.PageRequest
 import com.example.infrastructure.config.getUserIdFromJwt
 import com.example.presentation.controller.InvoiceController
 import com.example.presentation.dto.InvoiceRegistrationRequest
@@ -24,7 +25,9 @@ fun Route.invoiceRoutes(invoiceController: InvoiceController) {
                 val userId = call.getUserIdFromJwt()
                 val startDate = call.request.queryParameters["startDate"]
                 val endDate = call.request.queryParameters["endDate"]
-                val response = invoiceController.getInvoices(userId, startDate, endDate)
+                val page = call.request.queryParameters["page"]?.toIntOrNull()
+                val size = call.request.queryParameters["size"]?.toIntOrNull()
+                val response = invoiceController.getInvoices(userId, startDate, endDate, page, size)
                 call.respond(HttpStatusCode.OK, response)
             }
         }

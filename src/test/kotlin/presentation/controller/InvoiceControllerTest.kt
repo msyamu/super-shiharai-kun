@@ -3,6 +3,8 @@ package presentation.controller
 import com.example.application.usecase.InvoiceListUseCase
 import com.example.application.usecase.InvoiceRegistrationUseCase
 import com.example.domain.model.Invoice
+import com.example.domain.model.Page
+import com.example.domain.model.PageRequest
 import com.example.presentation.controller.InvoiceController
 import com.example.presentation.dto.InvoiceRegistrationRequest
 import io.mockk.coEvery
@@ -129,19 +131,21 @@ class InvoiceControllerTest {
             )
         )
 
-        coEvery { invoiceListUseCase.execute(userId, null, null) } returns invoices
+        val pageRequest = PageRequest(page = 1, size = 20)
+        val page = Page(content = invoices, totalElements = invoices.size.toLong(), pageRequest = pageRequest)
+        coEvery { invoiceListUseCase.execute(userId, null, null, pageRequest) } returns page
 
         // When
-        val result = invoiceController.getInvoices(userId, null, null)
+        val result = invoiceController.getInvoices(userId, null, null, 1, 20)
 
         // Then
-        assertEquals(2, result.size)
-        assertEquals(invoices[0].id, result[0].id)
-        assertEquals(invoices[1].id, result[1].id)
-        assertEquals(userId, result[0].userId)
-        assertEquals(userId, result[1].userId)
+        assertEquals(2, result.data.size)
+        assertEquals(invoices[0].id, result.data[0].id)
+        assertEquals(invoices[1].id, result.data[1].id)
+        assertEquals(userId, result.data[0].userId)
+        assertEquals(userId, result.data[1].userId)
         
-        coVerify { invoiceListUseCase.execute(userId, null, null) }
+        coVerify { invoiceListUseCase.execute(userId, null, null, pageRequest) }
     }
 
     @Test
@@ -167,17 +171,19 @@ class InvoiceControllerTest {
             )
         )
 
-        coEvery { invoiceListUseCase.execute(userId, startDate, endDate) } returns filteredInvoices
+        val pageRequest = PageRequest(page = 1, size = 20)
+        val page = Page(content = filteredInvoices, totalElements = filteredInvoices.size.toLong(), pageRequest = pageRequest)
+        coEvery { invoiceListUseCase.execute(userId, startDate, endDate, pageRequest) } returns page
 
         // When
-        val result = invoiceController.getInvoices(userId, startDate?.toString(), endDate?.toString())
+        val result = invoiceController.getInvoices(userId, startDate?.toString(), endDate?.toString(), 1, 20)
 
         // Then
-        assertEquals(1, result.size)
-        assertEquals(filteredInvoices[0].id, result[0].id)
-        assertEquals(userId, result[0].userId)
+        assertEquals(1, result.data.size)
+        assertEquals(filteredInvoices[0].id, result.data[0].id)
+        assertEquals(userId, result.data[0].userId)
         
-        coVerify { invoiceListUseCase.execute(userId, startDate, endDate) }
+        coVerify { invoiceListUseCase.execute(userId, startDate, endDate, pageRequest) }
     }
 
     @Test
@@ -186,15 +192,17 @@ class InvoiceControllerTest {
         val userId = 1
         val emptyList = emptyList<Invoice>()
 
-        coEvery { invoiceListUseCase.execute(userId, null, null) } returns emptyList
+        val pageRequest = PageRequest(page = 1, size = 20)
+        val page = Page(content = emptyList, totalElements = 0L, pageRequest = pageRequest)
+        coEvery { invoiceListUseCase.execute(userId, null, null, pageRequest) } returns page
 
         // When
-        val result = invoiceController.getInvoices(userId, null, null)
+        val result = invoiceController.getInvoices(userId, null, null, 1, 20)
 
         // Then
-        assertEquals(0, result.size)
+        assertEquals(0, result.data.size)
         
-        coVerify { invoiceListUseCase.execute(userId, null, null) }
+        coVerify { invoiceListUseCase.execute(userId, null, null, pageRequest) }
     }
 
     @Test
@@ -202,15 +210,16 @@ class InvoiceControllerTest {
         // Given
         val userId = 999 // 存在しないユーザー
         
-        coEvery { invoiceListUseCase.execute(userId, null, null) } throws IllegalArgumentException("User not found")
+        val pageRequest = PageRequest(page = 1, size = 20)
+        coEvery { invoiceListUseCase.execute(userId, null, null, pageRequest) } throws IllegalArgumentException("User not found")
 
         // When & Then
         val exception = assertThrows<IllegalArgumentException> {
-            invoiceController.getInvoices(userId, null, null)
+            invoiceController.getInvoices(userId, null, null, 1, 20)
         }
         assertEquals("User not found", exception.message)
         
-        coVerify { invoiceListUseCase.execute(userId, null, null) }
+        coVerify { invoiceListUseCase.execute(userId, null, null, pageRequest) }
     }
 
     @Test
@@ -274,16 +283,18 @@ class InvoiceControllerTest {
             )
         )
 
-        coEvery { invoiceListUseCase.execute(userId, startDate, null) } returns filteredInvoices
+        val pageRequest = PageRequest(page = 1, size = 20)
+        val page = Page(content = filteredInvoices, totalElements = filteredInvoices.size.toLong(), pageRequest = pageRequest)
+        coEvery { invoiceListUseCase.execute(userId, startDate, null, pageRequest) } returns page
 
         // When
-        val result = invoiceController.getInvoices(userId, startDate?.toString(), null)
+        val result = invoiceController.getInvoices(userId, startDate?.toString(), null, 1, 20)
 
         // Then
-        assertEquals(1, result.size)
-        assertEquals(filteredInvoices[0].id, result[0].id)
+        assertEquals(1, result.data.size)
+        assertEquals(filteredInvoices[0].id, result.data[0].id)
         
-        coVerify { invoiceListUseCase.execute(userId, startDate, null) }
+        coVerify { invoiceListUseCase.execute(userId, startDate, null, pageRequest) }
     }
 
     @Test
@@ -308,15 +319,17 @@ class InvoiceControllerTest {
             )
         )
 
-        coEvery { invoiceListUseCase.execute(userId, null, endDate) } returns filteredInvoices
+        val pageRequest = PageRequest(page = 1, size = 20)
+        val page = Page(content = filteredInvoices, totalElements = filteredInvoices.size.toLong(), pageRequest = pageRequest)
+        coEvery { invoiceListUseCase.execute(userId, null, endDate, pageRequest) } returns page
 
         // When
-        val result = invoiceController.getInvoices(userId, null, endDate?.toString())
+        val result = invoiceController.getInvoices(userId, null, endDate?.toString(), 1, 20)
 
         // Then
-        assertEquals(1, result.size)
-        assertEquals(filteredInvoices[0].id, result[0].id)
+        assertEquals(1, result.data.size)
+        assertEquals(filteredInvoices[0].id, result.data[0].id)
         
-        coVerify { invoiceListUseCase.execute(userId, null, endDate) }
+        coVerify { invoiceListUseCase.execute(userId, null, endDate, pageRequest) }
     }
 }

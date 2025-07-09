@@ -2,6 +2,7 @@ package infrastructure.repository
 
 import com.example.domain.model.Invoice
 import com.example.domain.model.NewInvoice
+import com.example.domain.model.PageRequest
 import com.example.infrastructure.repository.InvoiceRepositoryImpl
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.exposed.sql.*
@@ -75,11 +76,12 @@ class InvoiceRepositoryImplTest {
         invoiceRepository.create(invoice3)
 
         // When
-        val results = invoiceRepository.findByUserIdWithOptionalDateRange(userId, null, null)
+        val pageRequest = PageRequest(page = 1, size = 20)
+        val results = invoiceRepository.findByUserIdWithOptionalDateRange(userId, null, null, pageRequest)
 
         // Then
-        assertEquals(2, results.size)
-        assertTrue(results.all { it.userId == userId })
+        assertEquals(2, results.content.size)
+        assertTrue(results.content.all { it.userId == userId })
     }
 
     @Test
@@ -96,11 +98,12 @@ class InvoiceRepositoryImplTest {
 
         // When
         val startDate = LocalDate.of(2025, 10, 1)
-        val results = invoiceRepository.findByUserIdWithOptionalDateRange(userId, startDate, null)
+        val pageRequest = PageRequest(page = 1, size = 20)
+        val results = invoiceRepository.findByUserIdWithOptionalDateRange(userId, startDate, null, pageRequest)
 
         // Then
-        assertEquals(2, results.size)
-        assertTrue(results.all { it.paymentDueDate.isAfter(startDate) || it.paymentDueDate.isEqual(startDate) })
+        assertEquals(2, results.content.size)
+        assertTrue(results.content.all { it.paymentDueDate.isAfter(startDate) || it.paymentDueDate.isEqual(startDate) })
     }
 
     @Test
@@ -117,11 +120,12 @@ class InvoiceRepositoryImplTest {
 
         // When
         val endDate = LocalDate.of(2025, 12, 31)
-        val results = invoiceRepository.findByUserIdWithOptionalDateRange(userId, null, endDate)
+        val pageRequest = PageRequest(page = 1, size = 20)
+        val results = invoiceRepository.findByUserIdWithOptionalDateRange(userId, null, endDate, pageRequest)
 
         // Then
-        assertEquals(2, results.size)
-        assertTrue(results.all { it.paymentDueDate.isBefore(endDate) || it.paymentDueDate.isEqual(endDate) })
+        assertEquals(2, results.content.size)
+        assertTrue(results.content.all { it.paymentDueDate.isBefore(endDate) || it.paymentDueDate.isEqual(endDate) })
     }
 
     @Test
@@ -139,11 +143,12 @@ class InvoiceRepositoryImplTest {
         // When
         val startDate = LocalDate.of(2025, 10, 1)
         val endDate = LocalDate.of(2025, 12, 31)
-        val results = invoiceRepository.findByUserIdWithOptionalDateRange(userId, startDate, endDate)
+        val pageRequest = PageRequest(page = 1, size = 20)
+        val results = invoiceRepository.findByUserIdWithOptionalDateRange(userId, startDate, endDate, pageRequest)
 
         // Then
-        assertEquals(1, results.size)
-        val result = results[0]
+        assertEquals(1, results.content.size)
+        val result = results.content[0]
         assertTrue(result.paymentDueDate.isAfter(startDate) || result.paymentDueDate.isEqual(startDate))
         assertTrue(result.paymentDueDate.isBefore(endDate) || result.paymentDueDate.isEqual(endDate))
         assertEquals(LocalDate.of(2025, 12, 31), result.paymentDueDate)
@@ -159,10 +164,11 @@ class InvoiceRepositoryImplTest {
         // When
         val startDate = LocalDate.of(2026, 1, 1)
         val endDate = LocalDate.of(2026, 12, 31)
-        val results = invoiceRepository.findByUserIdWithOptionalDateRange(userId, startDate, endDate)
+        val pageRequest = PageRequest(page = 1, size = 20)
+        val results = invoiceRepository.findByUserIdWithOptionalDateRange(userId, startDate, endDate, pageRequest)
 
         // Then
-        assertEquals(0, results.size)
+        assertEquals(0, results.content.size)
     }
 
     @Test
@@ -174,10 +180,11 @@ class InvoiceRepositoryImplTest {
         invoiceRepository.create(invoice)
 
         // When
-        val results = invoiceRepository.findByUserIdWithOptionalDateRange(nonExistentUserId, null, null)
+        val pageRequest = PageRequest(page = 1, size = 20)
+        val results = invoiceRepository.findByUserIdWithOptionalDateRange(nonExistentUserId, null, null, pageRequest)
 
         // Then
-        assertEquals(0, results.size)
+        assertEquals(0, results.content.size)
     }
 
     @Test
@@ -204,8 +211,9 @@ class InvoiceRepositoryImplTest {
         assertEquals(userId, savedInvoice1.userId)
         assertEquals(userId, savedInvoice2.userId)
 
-        val allInvoices = invoiceRepository.findByUserIdWithOptionalDateRange(userId, null, null)
-        assertEquals(2, allInvoices.size)
+        val pageRequest = PageRequest(page = 1, size = 20)
+        val allInvoices = invoiceRepository.findByUserIdWithOptionalDateRange(userId, null, null, pageRequest)
+        assertEquals(2, allInvoices.content.size)
     }
 
     @Test
