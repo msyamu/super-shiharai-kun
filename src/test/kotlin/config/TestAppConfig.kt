@@ -18,7 +18,7 @@ object TestAppConfig {
     }
 
     object Jwt {
-        const val secret: String = "test-secret-key-for-testing-purposes-only"
+        const val secret: String = "test-secret-key-for-testing-purposes-only-with-sufficient-length-32+"
         const val issuer: String = "test-issuer"
         const val expiresInHours: Long = 1L
         const val expiresInMillis: Long = expiresInHours * 60 * 60 * 1000L

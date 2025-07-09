@@ -19,7 +19,14 @@ object AppConfig {
     }
 
     object Jwt {
-        val secret: String = getEnvRequired("JWT_SECRET")
+        val secret: String = getEnvRequired("JWT_SECRET").also { secret ->
+            require(secret.length >= 32) { 
+                "JWT_SECRET must be at least 32 characters (256 bits) for security. Current length: ${secret.length}" 
+            }
+            require(!secret.matches(Regex("^[a-zA-Z0-9]*$")) || secret.length >= 43) {
+                "JWT_SECRET appears to be weak. Use a strong random secret with special characters."
+            }
+        }
         val issuer: String = getEnvRequired("JWT_ISSUER")
         val expiresInHours: Long = getEnvRequired("JWT_EXPIRES_IN_HOURS").toLongOrNull()
             ?: throw IllegalStateException("JWT_EXPIRES_IN_HOURS must be a valid number")
