@@ -1,9 +1,10 @@
 package com.example.application.usecase
 
-import com.example.presentation.dto.UserRegistrationRequest
 import com.example.domain.model.NewUser
 import com.example.domain.model.User
 import com.example.domain.repository.UserRepository
+import com.example.presentation.dto.UserRegistrationRequest
+
 import org.mindrot.jbcrypt.BCrypt
 
 class UserRegistrationUseCase(

@@ -1,18 +1,19 @@
 package com.example
 
 import com.example.di.DependencyInjection
-import com.example.infrastructure.database.DatabaseFactory
-import com.example.infrastructure.config.configureErrorHandling
-import com.example.infrastructure.config.configureCallLogging
-import com.example.infrastructure.config.configureAuthentication
-import com.example.infrastructure.config.configureRequestValidation
 import com.example.infrastructure.config.AppConfig
 import com.example.infrastructure.config.Constants
+import com.example.infrastructure.config.configureAuthentication
+import com.example.infrastructure.config.configureCallLogging
+import com.example.infrastructure.config.configureErrorHandling
+import com.example.infrastructure.config.configureRequestValidation
+import com.example.infrastructure.database.DatabaseFactory
+
+import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
-import io.ktor.http.*
 import io.ktor.server.plugins.openapi.*
 import io.ktor.server.plugins.swagger.*
 import io.ktor.server.routing.*

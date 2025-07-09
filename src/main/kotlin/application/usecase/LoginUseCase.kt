@@ -4,6 +4,7 @@ import com.example.application.error.AuthenticationException
 import com.example.domain.model.User
 import com.example.domain.repository.UserRepository
 import com.example.presentation.dto.LoginRequest
+
 import org.mindrot.jbcrypt.BCrypt
 
 class LoginUseCase(

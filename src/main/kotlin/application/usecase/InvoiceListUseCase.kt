@@ -4,6 +4,7 @@ import com.example.domain.model.Invoice
 import com.example.domain.model.Page
 import com.example.domain.model.PageRequest
 import com.example.domain.repository.InvoiceRepository
+
 import java.time.LocalDate
 
 class InvoiceListUseCase(
