@@ -1,0 +1,354 @@
+openapi: 3.0.3
+info:
+  title: Super Shiharai-kun API
+  description: Payment service API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Health check
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "OK"
+                  timestamp:
+                    type: string
+                    description: Current timestamp in ISO format
+                    example: "2025-07-09T16:00:00Z"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/auth/signup:
+    post:
+      operationId: userSignup
+      summary: User registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistrationRequest'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/auth/login:
+    post:
+      operationId: userLogin
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/invoices:
+    post:
+      operationId: registerInvoice
+      summary: Register new invoice
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoiceRegistrationRequest'
+      responses:
+        '201':
+          description: Invoice created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - Invalid or missing JWT token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      operationId: getInvoices
+      summary: Get invoices
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: startDate
+          in: query
+          description: Start date for filtering (YYYY-MM-DD)
+          required: false
+          schema:
+            type: string
+            format: date
+            pattern: '^\d{4}-\d{2}-\d{2}$'
+        - name: endDate
+          in: query
+          description: End date for filtering (YYYY-MM-DD)
+          required: false
+          schema:
+            type: string
+            format: date
+            pattern: '^\d{4}-\d{2}-\d{2}$'
+      responses:
+        '200':
+          description: List of invoices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InvoiceResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - Invalid or missing JWT token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    UserRegistrationRequest:
+      type: object
+      required:
+        - companyName
+        - name
+        - email
+        - password
+      properties:
+        companyName:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: Company name
+          example: "テスト株式会社"
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: User name
+          example: "田中太郎"
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 255
+          description: Email address
+          example: "tanaka@example.com"
+        password:
+          type: string
+          minLength: 8
+          maxLength: 255
+          description: Password (minimum 8 characters)
+          example: "password123"
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 255
+          description: Email address
+          example: "tanaka@example.com"
+        password:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: Password
+          example: "password123"
+
+    InvoiceRegistrationRequest:
+      type: object
+      required:
+        - paymentAmount
+        - paymentDueDate
+      properties:
+        paymentAmount:
+          type: string
+          pattern: '^(?!0$)\d{1,13}(\.\d{1,2})?$'
+          description: Payment amount (max 9,999,999,999,999.99, up to 2 decimal places)
+          example: "10000.00"
+        paymentDueDate:
+          type: string
+          format: date
+          pattern: '^\d{4}-\d{2}-\d{2}$'
+          description: Payment due date (YYYY-MM-DD, must be today or future)
+          example: "2025-12-31"
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: User ID
+          example: 1
+        companyName:
+          type: string
+          description: Company name
+          example: "テスト株式会社"
+        name:
+          type: string
+          description: User name
+          example: "田中太郎"
+        email:
+          type: string
+          description: Email address
+          example: "tanaka@example.com"
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT token
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        user:
+          $ref: '#/components/schemas/UserResponse'
+
+    InvoiceResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Invoice ID
+          example: 1
+        userId:
+          type: integer
+          description: User ID
+          example: 3
+        issueDate:
+          type: string
+          description: Issue date (YYYY-MM-DD)
+          example: "2025-07-09"
+        paymentAmount:
+          type: string
+          description: Payment amount
+          example: "10000.00"
+        fee:
+          type: string
+          description: Fee amount
+          example: "400.00"
+        feeRate:
+          type: string
+          description: Fee rate
+          example: "0.04"
+        taxAmount:
+          type: string
+          description: Tax amount
+          example: "40.00"
+        taxRate:
+          type: string
+          description: Tax rate
+          example: "0.10"
+        totalAmount:
+          type: string
+          description: Total amount
+          example: "10440.00"
+        paymentDueDate:
+          type: string
+          description: Payment due date (YYYY-MM-DD)
+          example: "2025-08-09"
+        createdAt:
+          type: string
+          description: Created timestamp (ISO format)
+          example: "2025-07-09T15:06:10.705271"
+        updatedAt:
+          type: string
+          description: Updated timestamp (ISO format)
+          example: "2025-07-09T15:06:10.705271"
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: "Bad request"
+      example:
+        error: "Bad request"

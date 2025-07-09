@@ -27,8 +27,10 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:3.2.1")
     implementation("io.ktor:ktor-server-content-negotiation:3.2.1")
     implementation("io.ktor:ktor-server-call-logging:3.2.1")
-    implementation("io.ktor:ktor-server-request-validation:3.2.1")
     implementation("io.ktor:ktor-server-config-yaml:3.2.1")
+    implementation("io.ktor:ktor-server-openapi:3.2.1")
+    implementation("io.ktor:ktor-server-swagger:3.2.1")
+    implementation("io.ktor:ktor-server-cors:3.2.1")
 
     // BCrypt
     implementation("org.mindrot:jbcrypt:0.4")
