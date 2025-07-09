@@ -22,12 +22,6 @@ Infrastructure ←────┘
 - **UseCaseは全てsuspend関数**
 - **エラーハンドリングはController層で統一**
 
-## データベース
-
-### マイグレーション戦略
-
-テーブル変更時は`SchemaUtils.create`ではなく、手動でALTER文を実行。本番では必ずバックアップを取ってから実行する。
-
 ## API設計
 
 ### ページネーション実装の注意
