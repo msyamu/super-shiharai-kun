@@ -4,6 +4,8 @@ import com.example.infrastructure.api.route.invoiceRoutes
 import com.example.presentation.dto.InvoiceRegistrationRequest
 import com.example.presentation.dto.InvoiceResponse
 import com.example.presentation.dto.PaginatedResponse
+import java.math.BigDecimal
+import java.time.LocalDate
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -47,8 +49,8 @@ class InvoiceRouteTest {
         TestRouteUtil.configureTestApplication(this, database)
 
         val request = InvoiceRegistrationRequest(
-            paymentAmount = "10000.00",
-            paymentDueDate = "2025-12-31"
+            paymentAmount = BigDecimal("10000.00"),
+            paymentDueDate = LocalDate.of(2025, 12, 31)
         )
 
         // When
@@ -73,8 +75,8 @@ class InvoiceRouteTest {
         TestRouteUtil.configureTestApplication(this, database)
 
         val request = InvoiceRegistrationRequest(
-            paymentAmount = "10000.00",
-            paymentDueDate = "2025-12-31"
+            paymentAmount = BigDecimal("10000.00"),
+            paymentDueDate = LocalDate.of(2025, 12, 31)
         )
 
         // When
@@ -93,8 +95,8 @@ class InvoiceRouteTest {
         TestRouteUtil.configureTestApplication(this, database)
 
         val request = InvoiceRegistrationRequest(
-            paymentAmount = "10000.00",
-            paymentDueDate = "2025-12-31"
+            paymentAmount = BigDecimal("10000.00"),
+            paymentDueDate = LocalDate.of(2025, 12, 31)
         )
 
         // When
@@ -218,8 +220,8 @@ class InvoiceRouteTest {
         TestRouteUtil.configureTestApplication(this, database)
         
         // Create test invoices with different payment due dates
-        TestDatabaseUtil.createTestInvoice(database, userId, paymentDueDate = "2025-01-15")
-        TestDatabaseUtil.createTestInvoice(database, userId, paymentDueDate = "2025-02-15")
+        TestDatabaseUtil.createTestInvoice(database, userId, paymentDueDate = "2025-01-15")  // 範囲内
+        TestDatabaseUtil.createTestInvoice(database, userId, paymentDueDate = "2025-02-15")  // 範囲外
 
         // When
         val response = client.get("/api/v1/invoices") {

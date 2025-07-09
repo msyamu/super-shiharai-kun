@@ -2,6 +2,7 @@ package com.example.presentation.controller
 
 import com.example.application.usecase.LoginUseCase
 import com.example.application.usecase.UserRegistrationUseCase
+import com.example.domain.model.User
 import com.example.infrastructure.service.JwtService
 import com.example.presentation.dto.LoginRequest
 import com.example.presentation.dto.LoginResponse
@@ -15,23 +16,21 @@ class UserController(
 ) {
     suspend fun signup(request: UserRegistrationRequest): UserResponse {
         val user = userRegistrationUseCase.execute(request)
-        return UserResponse(
-            id = user.id,
-            companyName = user.companyName,
-            name = user.name,
-            email = user.email
-        )
+        return user.toResponse()
     }
 
     suspend fun login(request: LoginRequest): LoginResponse {
         val user = loginUseCase.execute(request)
         val token = jwtService.generateToken(user)
-        val userResponse = UserResponse(
-            id = user.id,
-            companyName = user.companyName,
-            name = user.name,
-            email = user.email
+        return LoginResponse(token = token, user = user.toResponse())
+    }
+    
+    private fun User.toResponse(): UserResponse {
+        return UserResponse(
+            id = id,
+            companyName = companyName,
+            name = name,
+            email = email
         )
-        return LoginResponse(token = token, user = userResponse)
     }
 }

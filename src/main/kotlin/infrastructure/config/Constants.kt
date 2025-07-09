@@ -11,4 +11,11 @@ object Constants {
     const val EMAIL_ALREADY_EXISTS_ERROR = "Email already exists"
     const val INVALID_CREDENTIALS_ERROR = "Invalid email or password"
     const val USER_ID_NOT_FOUND_ERROR = "User ID not found in JWT token"
+    
+    // Environment Constants
+    object Environment {
+        const val LOCAL = "local"
+        const val PRODUCTION = "production"
+        const val DEVELOPMENT = "development"
+    }
 }

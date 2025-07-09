@@ -25,8 +25,8 @@ class InvoiceRegistrationUseCaseTest {
         // Given
         val userId = 1
         val request = InvoiceRegistrationRequest(
-            paymentAmount = "10000.00",
-            paymentDueDate = "2025-12-31"
+            paymentAmount = BigDecimal("10000.00"),
+            paymentDueDate = LocalDate.of(2025, 12, 31)
         )
 
         val savedInvoice = Invoice(

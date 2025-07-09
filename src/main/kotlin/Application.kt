@@ -6,6 +6,7 @@ import com.example.infrastructure.config.configureErrorHandling
 import com.example.infrastructure.config.configureCallLogging
 import com.example.infrastructure.config.configureAuthentication
 import com.example.infrastructure.config.AppConfig
+import com.example.infrastructure.config.Constants
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
@@ -30,7 +31,7 @@ fun Application.module() {
     }
 
     // CORS設定 (local環境のみ)
-    if (AppConfig.Server.environment == "local") {
+    if (AppConfig.Server.environment == Constants.Environment.LOCAL) {
         install(CORS) {
             anyHost()
             allowCredentials = true
@@ -46,7 +47,7 @@ fun Application.module() {
     }
 
     // OpenAPI and Swagger (local環境のみ)
-    if (AppConfig.Server.environment == "local") {
+    if (AppConfig.Server.environment == Constants.Environment.LOCAL) {
         routing {
             openAPI(path = "openapi", swaggerFile = "openapi.yaml")
             swaggerUI(path = "swagger", swaggerFile = "openapi.yaml")

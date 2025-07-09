@@ -37,8 +37,8 @@ class InvoiceControllerTest {
         // Given
         val userId = 1
         val request = InvoiceRegistrationRequest(
-            paymentAmount = "10000.00",
-            paymentDueDate = "2025-12-31"
+            paymentAmount = BigDecimal("10000.00"),
+            paymentDueDate = LocalDate.of(2025, 12, 31)
         )
         
         val registeredInvoice = Invoice(
@@ -81,8 +81,8 @@ class InvoiceControllerTest {
         // Given
         val userId = 1
         val request = InvoiceRegistrationRequest(
-            paymentAmount = "invalid-amount",
-            paymentDueDate = "2025-12-31"
+            paymentAmount = BigDecimal("10000.00"),
+            paymentDueDate = LocalDate.of(2025, 12, 31)
         )
 
         coEvery { invoiceRegistrationUseCase.execute(userId, request) } throws IllegalArgumentException("Invalid payment amount")
@@ -227,8 +227,8 @@ class InvoiceControllerTest {
         // Given
         val userId = 2
         val request = InvoiceRegistrationRequest(
-            paymentAmount = "50000.00",
-            paymentDueDate = "2025-06-15"
+            paymentAmount = BigDecimal("10000.00"),
+            paymentDueDate = LocalDate.of(2025, 12, 31)
         )
         
         val registeredInvoice = Invoice(
