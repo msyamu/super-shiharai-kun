@@ -1,4 +1,4 @@
-package com.example.presentation.route
+package com.example.infrastructure.api.route
 
 import com.example.infrastructure.config.getUserIdFromJwt
 import com.example.presentation.controller.InvoiceController
@@ -18,6 +18,14 @@ fun Route.invoiceRoutes(invoiceController: InvoiceController) {
                 val request = call.receive<InvoiceRegistrationRequest>()
                 val response = invoiceController.registerInvoice(userId, request)
                 call.respond(HttpStatusCode.Created, response)
+            }
+
+            get {
+                val userId = call.getUserIdFromJwt()
+                val startDate = call.request.queryParameters["startDate"]
+                val endDate = call.request.queryParameters["endDate"]
+                val response = invoiceController.getInvoices(userId, startDate, endDate)
+                call.respond(HttpStatusCode.OK, response)
             }
         }
     }
