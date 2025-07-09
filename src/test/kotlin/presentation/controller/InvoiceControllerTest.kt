@@ -392,4 +392,28 @@ class InvoiceControllerTest {
         }
         assertEquals("End date cannot be blank", exception.message)
     }
+
+    @Test
+    fun `getInvoices should throw exception when start date format is invalid`() = runTest {
+        // Given
+        val userId = 1
+
+        // When & Then
+        val exception = assertThrows<IllegalArgumentException> {
+            invoiceController.getInvoices(userId, "2025-13-01", null, 1, 20)
+        }
+        assertEquals("Invalid start date format", exception.message)
+    }
+
+    @Test
+    fun `getInvoices should throw exception when end date format is invalid`() = runTest {
+        // Given
+        val userId = 1
+
+        // When & Then
+        val exception = assertThrows<IllegalArgumentException> {
+            invoiceController.getInvoices(userId, null, "invalid-date", 1, 20)
+        }
+        assertEquals("Invalid end date format", exception.message)
+    }
 }

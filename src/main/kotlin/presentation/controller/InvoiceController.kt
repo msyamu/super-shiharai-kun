@@ -59,8 +59,12 @@ class InvoiceController(
             throw IllegalArgumentException("End date cannot be blank")
         }
         
-        val start = startDate?.let { LocalDate.parse(it) }
-        val end = endDate?.let { LocalDate.parse(it) }
+        val start = startDate?.runCatching { LocalDate.parse(this) }?.getOrElse { 
+            throw IllegalArgumentException("Invalid start date format") 
+        }
+        val end = endDate?.runCatching { LocalDate.parse(this) }?.getOrElse { 
+            throw IllegalArgumentException("Invalid end date format") 
+        }
         
         if (start != null && end != null && start.isAfter(end)) {
             throw IllegalArgumentException("Start date must be before or equal to end date")
