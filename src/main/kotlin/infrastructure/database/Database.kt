@@ -17,7 +17,7 @@ object DatabaseFactory {
         )
         
         transaction {
-            SchemaUtils.create(UserTable)
+            SchemaUtils.create(UserTable, InvoiceTable)
         }
     }
 }
