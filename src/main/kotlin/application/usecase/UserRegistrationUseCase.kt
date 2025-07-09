@@ -1,6 +1,5 @@
 package com.example.application.usecase
 
-import com.example.infrastructure.config.Constants
 import com.example.presentation.dto.UserRegistrationRequest
 import com.example.domain.model.NewUser
 import com.example.domain.model.User
@@ -13,7 +12,7 @@ class UserRegistrationUseCase(
     suspend fun execute(request: UserRegistrationRequest): User {
         val existingUser = userRepository.findByEmail(request.email)
         if (existingUser != null) {
-            throw IllegalArgumentException(Constants.EMAIL_ALREADY_EXISTS_ERROR)
+            throw IllegalArgumentException("Email already exists")
         }
 
         val hashedPassword = BCrypt.hashpw(request.password, BCrypt.gensalt())

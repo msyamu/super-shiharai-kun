@@ -1,14 +1,20 @@
 package com.example.domain.model
 
 data class PageRequest(
-    val page: Int = 1,
-    val size: Int = 20
+    val page: Int = MIN_PAGE_NUMBER,
+    val size: Int = DEFAULT_PAGE_SIZE
 ) {
+    companion object {
+        const val DEFAULT_PAGE_SIZE = 20
+        const val MAX_PAGE_SIZE = 100
+        const val MIN_PAGE_NUMBER = 1
+    }
+    
     val offset: Int get() = (page - 1) * size
     
     init {
-        require(page >= 1) { "Page must be >= 1" }
-        require(size in 1..100) { "Size must be between 1 and 100" }
+        require(page >= MIN_PAGE_NUMBER) { "Page must be >= $MIN_PAGE_NUMBER" }
+        require(size in 1..MAX_PAGE_SIZE) { "Size must be between 1 and $MAX_PAGE_SIZE" }
     }
 }
 

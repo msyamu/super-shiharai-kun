@@ -5,6 +5,7 @@ import com.example.infrastructure.database.DatabaseFactory
 import com.example.infrastructure.config.configureErrorHandling
 import com.example.infrastructure.config.configureCallLogging
 import com.example.infrastructure.config.configureAuthentication
+import com.example.infrastructure.config.configureRequestValidation
 import com.example.infrastructure.config.AppConfig
 import com.example.infrastructure.config.Constants
 import io.ktor.serialization.kotlinx.json.*
@@ -29,6 +30,8 @@ fun Application.module() {
     install(ContentNegotiation) {
         json()
     }
+
+    configureRequestValidation()
 
     // CORS設定 (local環境のみ)
     if (AppConfig.Server.environment == Constants.Environment.LOCAL) {

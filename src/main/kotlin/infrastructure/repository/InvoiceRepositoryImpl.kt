@@ -7,12 +7,12 @@ import com.example.domain.model.PageRequest
 import com.example.domain.repository.InvoiceRepository
 import com.example.infrastructure.database.InvoiceTable
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 class InvoiceRepositoryImpl : InvoiceRepository {
-    override suspend fun create(newInvoice: NewInvoice): Invoice = transaction {
+    override suspend fun create(newInvoice: NewInvoice): Invoice = newSuspendedTransaction {
         val insertedRow = InvoiceTable.insert {
             it[userId] = newInvoice.userId
             it[issueDate] = newInvoice.issueDate
@@ -32,7 +32,7 @@ class InvoiceRepositoryImpl : InvoiceRepository {
     }
 
 
-    override suspend fun findByUserIdWithOptionalDateRange(userId: Int, startDate: LocalDate?, endDate: LocalDate?, pageRequest: PageRequest): Page<Invoice> = transaction {
+    override suspend fun findByUserIdWithOptionalDateRange(userId: Int, startDate: LocalDate?, endDate: LocalDate?, pageRequest: PageRequest): Page<Invoice> = newSuspendedTransaction {
         var query = InvoiceTable.selectAll().where { InvoiceTable.userId eq userId }
 
         startDate?.let { start ->

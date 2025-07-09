@@ -4,6 +4,7 @@ import com.example.application.error.AuthenticationException
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.BadRequestException
+import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import org.slf4j.LoggerFactory
@@ -26,6 +27,14 @@ fun Application.configureErrorHandling() {
             call.respond(
                 HttpStatusCode.Unauthorized,
                 mapOf("error" to "Authentication failed")
+            )
+        }
+
+        exception<RequestValidationException> { call, cause ->
+            logger.warn("Request validation failed: ${cause.reasons.joinToString()}", cause)
+            call.respond(
+                HttpStatusCode.BadRequest,
+                mapOf("error" to "Bad request")
             )
         }
 

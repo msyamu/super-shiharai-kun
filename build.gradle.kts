@@ -35,6 +35,7 @@ dependencies {
     implementation("io.ktor:ktor-server-openapi:3.2.1")
     implementation("io.ktor:ktor-server-swagger:3.2.1")
     implementation("io.ktor:ktor-server-cors:3.2.1")
+    implementation("io.ktor:ktor-server-request-validation:3.2.1")
 
     // BCrypt
     implementation("org.mindrot:jbcrypt:0.4")

@@ -257,7 +257,7 @@ class InvoiceRouteTest {
     }
 
     @Test
-    fun `GET api v1 invoices should handle invalid page parameters gracefully`() = testApplication {
+    fun `GET api v1 invoices should return 400 for invalid page parameters`() = testApplication {
         // Given
         val userId = TestDatabaseUtil.createTestUser(database)
         val token = TestRouteUtil.createValidJwtToken(userId)
@@ -270,10 +270,8 @@ class InvoiceRouteTest {
             parameter("page", "0")
         }
 
-        // Then - should use default page 1
-        assertEquals(HttpStatusCode.OK, response.status)
-        val result = Json.decodeFromString<PaginatedResponse<InvoiceResponse>>(response.bodyAsText())
-        assertEquals(1, result.pagination.page)
+        // Then - should return BadRequest
+        assertEquals(HttpStatusCode.BadRequest, response.status)
     }
 
     @Test

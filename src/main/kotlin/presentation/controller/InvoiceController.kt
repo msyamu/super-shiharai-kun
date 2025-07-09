@@ -5,6 +5,7 @@ import com.example.application.usecase.InvoiceListUseCase
 import com.example.domain.model.Invoice
 import com.example.domain.model.Page
 import com.example.domain.model.PageRequest
+import com.example.infrastructure.config.Constants
 import com.example.presentation.dto.InvoiceRegistrationRequest
 import com.example.presentation.dto.InvoiceResponse
 import com.example.presentation.dto.PaginatedResponse
@@ -37,14 +38,29 @@ class InvoiceController(
     }
     
     private fun createPageRequest(page: Int?, size: Int?): PageRequest {
-        val validatedPage = page?.takeIf { it >= 1 } ?: 1
-        val validatedSize = size?.takeIf { it in 1..100 } ?: 20
+        val validatedPage = page ?: PageRequest.MIN_PAGE_NUMBER
+        val validatedSize = size ?: PageRequest.DEFAULT_PAGE_SIZE
+        
+        if (validatedPage < PageRequest.MIN_PAGE_NUMBER) {
+            throw IllegalArgumentException("Page number must be at least ${PageRequest.MIN_PAGE_NUMBER}")
+        }
+        if (validatedSize !in 1..PageRequest.MAX_PAGE_SIZE) {
+            throw IllegalArgumentException("Page size must be between 1 and ${PageRequest.MAX_PAGE_SIZE}")
+        }
+        
         return PageRequest(validatedPage, validatedSize)
     }
     
     private fun parseDateRange(startDate: String?, endDate: String?): Pair<LocalDate?, LocalDate?> {
-        val start = startDate?.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
-        val end = endDate?.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
+        if (startDate != null && startDate.isBlank()) {
+            throw IllegalArgumentException("Start date cannot be blank")
+        }
+        if (endDate != null && endDate.isBlank()) {
+            throw IllegalArgumentException("End date cannot be blank")
+        }
+        
+        val start = startDate?.let { LocalDate.parse(it) }
+        val end = endDate?.let { LocalDate.parse(it) }
         
         if (start != null && end != null && start.isAfter(end)) {
             throw IllegalArgumentException("Start date must be before or equal to end date")

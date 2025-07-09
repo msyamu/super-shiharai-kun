@@ -332,4 +332,64 @@ class InvoiceControllerTest {
         
         coVerify { invoiceListUseCase.execute(userId, null, endDate, pageRequest) }
     }
+
+    @Test
+    fun `getInvoices should throw exception when page number is less than 1`() = runTest {
+        // Given
+        val userId = 1
+
+        // When & Then
+        val exception = assertThrows<IllegalArgumentException> {
+            invoiceController.getInvoices(userId, null, null, 0, 20)
+        }
+        assertEquals("Page number must be at least 1", exception.message)
+    }
+
+    @Test
+    fun `getInvoices should throw exception when page size is less than 1`() = runTest {
+        // Given
+        val userId = 1
+
+        // When & Then
+        val exception = assertThrows<IllegalArgumentException> {
+            invoiceController.getInvoices(userId, null, null, 1, 0)
+        }
+        assertEquals("Page size must be between 1 and 100", exception.message)
+    }
+
+    @Test
+    fun `getInvoices should throw exception when page size exceeds maximum`() = runTest {
+        // Given
+        val userId = 1
+
+        // When & Then
+        val exception = assertThrows<IllegalArgumentException> {
+            invoiceController.getInvoices(userId, null, null, 1, 101)
+        }
+        assertEquals("Page size must be between 1 and 100", exception.message)
+    }
+
+    @Test
+    fun `getInvoices should throw exception when start date is blank`() = runTest {
+        // Given
+        val userId = 1
+
+        // When & Then
+        val exception = assertThrows<IllegalArgumentException> {
+            invoiceController.getInvoices(userId, "", null, 1, 20)
+        }
+        assertEquals("Start date cannot be blank", exception.message)
+    }
+
+    @Test
+    fun `getInvoices should throw exception when end date is blank`() = runTest {
+        // Given
+        val userId = 1
+
+        // When & Then
+        val exception = assertThrows<IllegalArgumentException> {
+            invoiceController.getInvoices(userId, null, "", 1, 20)
+        }
+        assertEquals("End date cannot be blank", exception.message)
+    }
 }
