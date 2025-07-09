@@ -16,7 +16,7 @@ data class InvoiceRegistrationRequest(
 ) : BaseRequest {
     
     companion object {
-        private val MAX_PAYMENT_AMOUNT = BigDecimal("9999999999999.99")
+        private val MAX_PAYMENT_AMOUNT = BigDecimal("999999999999.99")
         private const val MAX_PAYMENT_DUE_DATE_YEARS = 1L
     }
     

@@ -266,8 +266,8 @@ components:
       properties:
         paymentAmount:
           type: string
-          pattern: '^(?!0$)\d{1,13}(\.\d{1,2})?$'
-          description: Payment amount (max 9,999,999,999,999.99, up to 2 decimal places)
+          pattern: '^(?!0$)\d{1,12}(\.\d{1,2})?$'
+          description: Payment amount (max 999,999,999,999.99, up to 2 decimal places)
           example: "10000.00"
         paymentDueDate:
           type: string

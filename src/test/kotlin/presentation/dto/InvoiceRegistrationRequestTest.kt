@@ -63,7 +63,7 @@ class InvoiceRegistrationRequestTest {
     fun `should return Invalid when paymentAmount exceeds maximum`() {
         // Given
         val tomorrow = LocalDate.now().plusDays(1)
-        val tooLargeAmount = BigDecimal("10000000000000.00")
+        val tooLargeAmount = BigDecimal("1000000000000.00")
         val request = InvoiceRegistrationRequest(
             paymentAmount = tooLargeAmount,
             paymentDueDate = tomorrow
@@ -74,7 +74,7 @@ class InvoiceRegistrationRequestTest {
 
         // Then
         assertTrue(result is ValidationResult.Invalid)
-        assertEquals("Payment amount cannot exceed 9999999999999.99", (result as ValidationResult.Invalid).reasons.first())
+        assertEquals("Payment amount cannot exceed 999999999999.99", (result as ValidationResult.Invalid).reasons.first())
     }
 
     @Test
@@ -116,7 +116,7 @@ class InvoiceRegistrationRequestTest {
         // Given
         val tomorrow = LocalDate.now().plusDays(1)
         val request = InvoiceRegistrationRequest(
-            paymentAmount = BigDecimal("9999999999999.99"),
+            paymentAmount = BigDecimal("999999999999.99"),
             paymentDueDate = tomorrow
         )
 
