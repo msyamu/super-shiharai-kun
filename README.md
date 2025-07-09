@@ -1,39 +1,56 @@
-# super-shiharai-kun
+# Super Shiharai-kun
 
-This project was created using the [Ktor Project Generator](https://start.ktor.io).
+支払いサービスのバックエンドAPI - Kotlin + Ktor + PostgreSQLで構築された請求書管理システム
 
-Here are some useful links to get you started:
+## 🏗️ アーキテクチャ
 
-- [Ktor Documentation](https://ktor.io/docs/home.html)
-- [Ktor GitHub page](https://github.com/ktorio/ktor)
-- The [Ktor Slack chat](https://app.slack.com/client/T09229ZC6/C0A974TJ9). You'll need to [request an invite](https://surveys.jetbrains.com/s3/kotlin-slack-sign-up) to join.
+Clean Architectureパターンを採用。詳細は [DEVELOPMENT.md](./DEVELOPMENT.md) を参照。
 
-## Features
+## 🚀 クイックスタート
 
-Here's a list of features included in this project:
+### 必要な環境
+- Java 17+
+- Docker & Docker Compose
 
-| Name                                               | Description                                                 |
-| ----------------------------------------------------|------------------------------------------------------------- |
-| [Routing](https://start.ktor.io/p/routing-default) | Allows to define structured routes and associated handlers. |
+### セットアップ（3分）
 
-## Building & Running
+1. **環境ファイル作成**
+   ```bash
+   cp .env.example .env
+   # .envファイルを編集（必要に応じて）
+   ```
 
-To build or run the project, use one of the following tasks:
+2. **起動**
+   ```bash
+   docker-compose up -d  # データベース起動
+   ./gradlew run         # アプリケーション起動
+   ```
 
-| Task                          | Description                                                          |
-| -------------------------------|---------------------------------------------------------------------- |
-| `./gradlew test`              | Run the tests                                                        |
-| `./gradlew build`             | Build everything                                                     |
-| `buildFatJar`                 | Build an executable JAR of the server with all dependencies included |
-| `buildImage`                  | Build the docker image to use with the fat JAR                       |
-| `publishImageToLocalRegistry` | Publish the docker image locally                                     |
-| `run`                         | Run the server                                                       |
-| `runDocker`                   | Run using the local docker image                                     |
+3. **動作確認**
+   ```bash
+   curl http://localhost:8080/health
+   ```
 
-If the server starts successfully, you'll see the following output:
+## 📚 ドキュメント
 
-```
-2024-12-04 14:32:45.584 [main] INFO  Application - Application started in 0.303 seconds.
-2024-12-04 14:32:45.682 [main] INFO  Application - Responding at http://0.0.0.0:8080
-```
+- **[開発者ガイド](./DEVELOPMENT.md)** - 設計思想、コーディング規約、開発フロー
+- **[Swagger UI](http://localhost:8080/swagger)** - API仕様（開発時のみ）
 
+## 🔧 API概要
+
+**認証**: JWT Bearer Token  
+**エンドポイント**:
+- `GET /health` - ヘルスチェック
+- `POST /api/v1/auth/signup` - ユーザー登録  
+- `POST /api/v1/auth/login` - ログイン
+- `POST /api/v1/invoices` - 請求書作成
+- `GET /api/v1/invoices` - 請求書一覧（ページネーション対応）
+
+## ⚡ よく使うコマンド
+
+```bash
+# 開発
+./gradlew run              # サーバー起動
+./gradlew test             # テスト実行
+./gradlew build            # ビルド
+``
