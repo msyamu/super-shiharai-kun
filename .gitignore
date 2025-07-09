@@ -37,3 +37,6 @@ out/
 
 ### Local env ###
 .env
+
+### Generated documentation ###
+docs/
