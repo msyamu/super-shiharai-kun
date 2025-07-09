@@ -1,5 +1,6 @@
 package com.example.infrastructure.config
 
+import com.example.application.error.AuthenticationException
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.BadRequestException
@@ -17,6 +18,14 @@ fun Application.configureErrorHandling() {
             call.respond(
                 HttpStatusCode.BadRequest,
                 mapOf("error" to "Bad request")
+            )
+        }
+
+        exception<AuthenticationException> { call, cause ->
+            logger.warn("Authentication failed: ${cause.message}", cause)
+            call.respond(
+                HttpStatusCode.Unauthorized,
+                mapOf("error" to "Authentication failed")
             )
         }
 

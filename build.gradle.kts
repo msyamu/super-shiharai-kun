@@ -5,6 +5,10 @@ plugins {
     kotlin("plugin.serialization") version "1.9.23"
 }
 
+tasks.test {
+    useJUnitPlatform()
+}
+
 group = "com.example"
 version = "0.0.1"
 
@@ -45,4 +49,13 @@ dependencies {
 
     // --- Logging ---
     implementation("ch.qos.logback:logback-classic:1.5.18")
+
+    // --- Testing ---
+    testImplementation("io.ktor:ktor-server-test-host:3.2.1")
+    testImplementation("io.ktor:ktor-client-content-negotiation:3.2.1")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.9.23")
+    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
+    testImplementation("com.h2database:h2:2.2.224")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

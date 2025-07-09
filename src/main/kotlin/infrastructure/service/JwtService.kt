@@ -19,12 +19,14 @@ class JwtService {
         .build()
 
     fun generateToken(user: User): String {
+        val currentTime = System.currentTimeMillis()
         return JWT.create()
             .withIssuer(issuer)
             .withSubject(user.id.toString())
             .withClaim("email", user.email)
             .withClaim("companyName", user.companyName)
-            .withExpiresAt(Date(System.currentTimeMillis() + expiresInMillis))
+            .withIssuedAt(Date(currentTime))
+            .withExpiresAt(Date(currentTime + expiresInMillis))
             .sign(algorithm)
     }
 
