@@ -114,7 +114,7 @@ class UserRouteTest {
     }
 
     @Test
-    fun `POST api v1 auth signup should return 400 for duplicate email`() = testApplication {
+    fun `POST api v1 auth signup should return 409 for duplicate email`() = testApplication {
         // Given
         TestRouteUtil.configureTestApplication(this, database)
         
@@ -138,7 +138,7 @@ class UserRouteTest {
         }
 
         // Then
-        assertEquals(HttpStatusCode.BadRequest, response.status)
+        assertEquals(HttpStatusCode.Conflict, response.status)
     }
 
     @Test

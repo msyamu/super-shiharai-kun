@@ -3,6 +3,7 @@ package presentation.controller
 import com.example.application.usecase.LoginUseCase
 import com.example.application.usecase.UserRegistrationUseCase
 import com.example.domain.model.User
+import com.example.domain.error.UserAlreadyExistsException
 import com.example.infrastructure.service.JwtService
 import com.example.presentation.controller.UserController
 import com.example.presentation.dto.LoginRequest
@@ -77,13 +78,13 @@ class UserControllerTest {
             password = "password123"
         )
 
-        coEvery { userRegistrationUseCase.execute(request) } throws IllegalArgumentException("Email already exists")
+        coEvery { userRegistrationUseCase.execute(request) } throws UserAlreadyExistsException("existing@example.com")
 
         // When & Then
-        val exception = assertThrows<IllegalArgumentException> {
+        val exception = assertThrows<UserAlreadyExistsException> {
             userController.signup(request)
         }
-        assertEquals("Email already exists", exception.message)
+        assertEquals("User with email 'existing@example.com' already exists", exception.message)
         
         coVerify { userRegistrationUseCase.execute(request) }
     }

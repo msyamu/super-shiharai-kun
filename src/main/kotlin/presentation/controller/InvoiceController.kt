@@ -10,6 +10,8 @@ import com.example.presentation.dto.InvoiceRegistrationRequest
 import com.example.presentation.dto.InvoiceResponse
 import com.example.presentation.dto.PaginatedResponse
 import com.example.presentation.dto.PaginationInfo
+import com.example.presentation.error.InvalidDateFormatException
+import com.example.presentation.error.InvalidPageRequestException
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -25,9 +27,9 @@ class InvoiceController(
     }
 
     suspend fun getInvoices(
-        userId: Int, 
-        startDate: String?, 
-        endDate: String?, 
+        userId: Int,
+        startDate: String?,
+        endDate: String?,
         page: Int?,
         size: Int?
     ): PaginatedResponse<InvoiceResponse> {
@@ -36,43 +38,43 @@ class InvoiceController(
         val pageResult = invoiceListUseCase.execute(userId, dateRange.first, dateRange.second, pageRequest)
         return createPaginatedResponse(pageResult)
     }
-    
+
     private fun createPageRequest(page: Int?, size: Int?): PageRequest {
         val validatedPage = page ?: PageRequest.MIN_PAGE_NUMBER
         val validatedSize = size ?: PageRequest.DEFAULT_PAGE_SIZE
-        
+
         if (validatedPage < PageRequest.MIN_PAGE_NUMBER) {
-            throw IllegalArgumentException("Page number must be at least ${PageRequest.MIN_PAGE_NUMBER}")
+            throw InvalidPageRequestException("Page number must be at least ${PageRequest.MIN_PAGE_NUMBER}")
         }
         if (validatedSize !in 1..PageRequest.MAX_PAGE_SIZE) {
-            throw IllegalArgumentException("Page size must be between 1 and ${PageRequest.MAX_PAGE_SIZE}")
+            throw InvalidPageRequestException("Page size must be between 1 and ${PageRequest.MAX_PAGE_SIZE}")
         }
-        
+
         return PageRequest(validatedPage, validatedSize)
     }
-    
+
     private fun parseDateRange(startDate: String?, endDate: String?): Pair<LocalDate?, LocalDate?> {
         if (startDate != null && startDate.isBlank()) {
-            throw IllegalArgumentException("Start date cannot be blank")
+            throw InvalidDateFormatException("Start date cannot be blank")
         }
         if (endDate != null && endDate.isBlank()) {
-            throw IllegalArgumentException("End date cannot be blank")
+            throw InvalidDateFormatException("End date cannot be blank")
         }
-        
-        val start = startDate?.runCatching { LocalDate.parse(this) }?.getOrElse { 
-            throw IllegalArgumentException("Invalid start date format") 
+
+        val start = startDate?.runCatching { LocalDate.parse(this) }?.getOrElse {
+            throw InvalidDateFormatException("Invalid start date format")
         }
-        val end = endDate?.runCatching { LocalDate.parse(this) }?.getOrElse { 
-            throw IllegalArgumentException("Invalid end date format") 
+        val end = endDate?.runCatching { LocalDate.parse(this) }?.getOrElse {
+            throw InvalidDateFormatException("Invalid end date format")
         }
-        
+
         if (start != null && end != null && start.isAfter(end)) {
-            throw IllegalArgumentException("Start date must be before or equal to end date")
+            throw InvalidDateFormatException("Start date must be before or equal to end date")
         }
-        
+
         return Pair(start, end)
     }
-    
+
     private fun createPaginatedResponse(pageResult: Page<Invoice>): PaginatedResponse<InvoiceResponse> {
         val paginationInfo = PaginationInfo(
             page = pageResult.pageRequest.page,
@@ -82,13 +84,13 @@ class InvoiceController(
             hasNext = pageResult.hasNext,
             hasPrevious = pageResult.hasPrevious
         )
-        
+
         return PaginatedResponse(
             data = pageResult.content.map { it.toResponse() },
             pagination = paginationInfo
         )
     }
-    
+
     private fun Invoice.toResponse(): InvoiceResponse {
         return InvoiceResponse(
             id = id,
@@ -105,8 +107,8 @@ class InvoiceController(
             updatedAt = updatedAt.toStringFormat()
         )
     }
-    
+
     private fun BigDecimal.toStringFormat(): String = this.toString()
-    private fun LocalDate.toStringFormat(): String = this.toString() 
+    private fun LocalDate.toStringFormat(): String = this.toString()
     private fun LocalDateTime.toStringFormat(): String = this.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 }

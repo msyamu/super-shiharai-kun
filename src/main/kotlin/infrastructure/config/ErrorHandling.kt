@@ -1,6 +1,9 @@
 package com.example.infrastructure.config
 
-import com.example.application.error.AuthenticationException
+import com.example.domain.error.AuthenticationException
+import com.example.domain.error.UserAlreadyExistsException
+import com.example.presentation.error.InvalidDateFormatException
+import com.example.presentation.error.InvalidPageRequestException
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.BadRequestException
@@ -26,7 +29,31 @@ fun Application.configureErrorHandling() {
             logger.warn("Authentication failed: ${cause.message}", cause)
             call.respond(
                 HttpStatusCode.Unauthorized,
-                mapOf("error" to "Authentication failed")
+                mapOf("error" to "Bad request")
+            )
+        }
+
+        exception<UserAlreadyExistsException> { call, cause ->
+            logger.warn("User registration failed: ${cause.message}", cause)
+            call.respond(
+                HttpStatusCode.Conflict,
+                mapOf("error" to "Bad request")
+            )
+        }
+
+        exception<InvalidDateFormatException> { call, cause ->
+            logger.warn("Invalid date format: ${cause.message}", cause)
+            call.respond(
+                HttpStatusCode.BadRequest,
+                mapOf("error" to "Bad request")
+            )
+        }
+
+        exception<InvalidPageRequestException> { call, cause ->
+            logger.warn("Invalid page request: ${cause.message}", cause)
+            call.respond(
+                HttpStatusCode.BadRequest,
+                mapOf("error" to "Bad request")
             )
         }
 

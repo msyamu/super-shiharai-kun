@@ -4,6 +4,7 @@ import com.example.application.usecase.UserRegistrationUseCase
 import com.example.domain.model.NewUser
 import com.example.domain.model.User
 import com.example.domain.repository.UserRepository
+import com.example.domain.error.UserAlreadyExistsException
 import com.example.presentation.dto.UserRegistrationRequest
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -74,11 +75,11 @@ class UserRegistrationUseCaseTest {
         coEvery { userRepository.findByEmail("existing@example.com") } returns existingUser
 
         // When & Then
-        val exception = assertThrows<IllegalArgumentException> {
+        val exception = assertThrows<UserAlreadyExistsException> {
             userRegistrationUseCase.execute(request)
         }
 
-        assertEquals("Email already exists", exception.message)
+        assertEquals("User with email 'existing@example.com' already exists", exception.message)
         coVerify { userRepository.findByEmail("existing@example.com") }
         coVerify(exactly = 0) { userRepository.save(any<NewUser>()) }
     }

@@ -7,6 +7,8 @@ import com.example.domain.model.Page
 import com.example.domain.model.PageRequest
 import com.example.presentation.controller.InvoiceController
 import com.example.presentation.dto.InvoiceRegistrationRequest
+import com.example.presentation.error.InvalidDateFormatException
+import com.example.presentation.error.InvalidPageRequestException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -339,7 +341,7 @@ class InvoiceControllerTest {
         val userId = 1
 
         // When & Then
-        val exception = assertThrows<IllegalArgumentException> {
+        val exception = assertThrows<InvalidPageRequestException> {
             invoiceController.getInvoices(userId, null, null, 0, 20)
         }
         assertEquals("Page number must be at least 1", exception.message)
@@ -351,7 +353,7 @@ class InvoiceControllerTest {
         val userId = 1
 
         // When & Then
-        val exception = assertThrows<IllegalArgumentException> {
+        val exception = assertThrows<InvalidPageRequestException> {
             invoiceController.getInvoices(userId, null, null, 1, 0)
         }
         assertEquals("Page size must be between 1 and 100", exception.message)
@@ -363,7 +365,7 @@ class InvoiceControllerTest {
         val userId = 1
 
         // When & Then
-        val exception = assertThrows<IllegalArgumentException> {
+        val exception = assertThrows<InvalidPageRequestException> {
             invoiceController.getInvoices(userId, null, null, 1, 101)
         }
         assertEquals("Page size must be between 1 and 100", exception.message)
@@ -375,7 +377,7 @@ class InvoiceControllerTest {
         val userId = 1
 
         // When & Then
-        val exception = assertThrows<IllegalArgumentException> {
+        val exception = assertThrows<InvalidDateFormatException> {
             invoiceController.getInvoices(userId, "", null, 1, 20)
         }
         assertEquals("Start date cannot be blank", exception.message)
@@ -387,7 +389,7 @@ class InvoiceControllerTest {
         val userId = 1
 
         // When & Then
-        val exception = assertThrows<IllegalArgumentException> {
+        val exception = assertThrows<InvalidDateFormatException> {
             invoiceController.getInvoices(userId, null, "", 1, 20)
         }
         assertEquals("End date cannot be blank", exception.message)
@@ -399,7 +401,7 @@ class InvoiceControllerTest {
         val userId = 1
 
         // When & Then
-        val exception = assertThrows<IllegalArgumentException> {
+        val exception = assertThrows<InvalidDateFormatException> {
             invoiceController.getInvoices(userId, "2025-13-01", null, 1, 20)
         }
         assertEquals("Invalid start date format", exception.message)
@@ -411,7 +413,7 @@ class InvoiceControllerTest {
         val userId = 1
 
         // When & Then
-        val exception = assertThrows<IllegalArgumentException> {
+        val exception = assertThrows<InvalidDateFormatException> {
             invoiceController.getInvoices(userId, null, "invalid-date", 1, 20)
         }
         assertEquals("Invalid end date format", exception.message)
